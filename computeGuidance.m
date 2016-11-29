@@ -1,19 +1,18 @@
-% Compute the final guidance image (G') for bilateral texture filtering
-% B:    blurred image (single or three channels)
-% mRTV: computed mRTV values
-% k:    patch size (odd valued)
 function G_prime = computeGuidance(B, mRTV, k)
 
+% Compute the final guidance image (G') based on Eq. (5) and (6)
+% B:    blurred image (single or three channeled)
+% mRTV: computed mRTV values
+% k:    odd valued patch size
+
     % Check B and mRTV have the same dimension
-    % and k is odd valued
-    assert(size(B, 1) == size(mRTV, 1) && ...
-           size(B, 2) == size(mRTV, 2) && mod(k, 2) == 1);
+    assert(size(B, 1) == size(mRTV, 1) && size(B, 2) == size(mRTV, 2));
     
     % Parameters
-    half_k = floor(k / 2); % half patch size
-    dimX = size(B, 1); % dimension of B in x
-    dimY = size(B, 2); % dimension of B in y
-    sigma_alpha = 5*k; % used in equation (6)
+    dimX = size(B, 1);     % dimension of B in x
+    dimY = size(B, 2);     % dimension of B in y
+    half_k = floor(k / 2); % half of patch size
+    sigma_alpha = 5*k;     % used in Eq. (6)
     
     % Compute the initial guidance image with patch shift
     G = zeros(size(B));
@@ -22,21 +21,22 @@ function G_prime = computeGuidance(B, mRTV, k)
     parfor i = 1 : dimX
         for j = 1 : dimY
             
+            % Extract the local patch
             minX = max(1, i-half_k);
             minY = max(1, j-half_k);
             maxX = min(i+half_k, dimX);
             maxY = min(j+half_k, dimY);
-            
             mRTV_patch = mRTV(minX:maxX, minY:maxY);
-            mRTV_min(i, j) = min(mRTV_patch(:));
             
+            % Compute the guidance image
+            mRTV_min(i, j) = min(mRTV_patch(:));
             [row, col] = find(mRTV_patch == mRTV_min(i, j), 1);
             G(i, j, :) = B(minX+row-1, minY+col-1, :);
             
         end
     end
     
-    % Compute the alpha map in equation (6)
+    % Compute the alpha map in Eq. (6)
     alpha = 2 * ((1 ./ (1 + exp(-sigma_alpha * (mRTV - mRTV_min)))) - 0.5);
     
     % Compute the final guidance image
