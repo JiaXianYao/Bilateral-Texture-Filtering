@@ -15,12 +15,12 @@ figure; imshow(im_filtered);
 
 % imshow(alpha, 'Colormap', jet(255));
 
-im = im2double(imread('../Images/woman-gray.png'));
+im = im2double(imread('../Images/woman.png'));
 I = rgb2gray(im);
 k = 7;
-iter = 1;
+iter = 5;
 
 tic;
 J1 = bilateralTextureFilter(im, k, iter); figure; imshow(J1);
-J2 = bilateralTextureFilterAlternative(im, k, iter); figure; imshow(J2);
+% J2 = bilateralTextureFilterAlternative(im, k, iter); figure; imshow(J2);
 toc;

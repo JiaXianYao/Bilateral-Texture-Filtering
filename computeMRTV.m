@@ -13,15 +13,7 @@ function mRTV = computeMRTV(I, k)
     dimY = size(I, 2); % dimension of I in y
     
     % Compute the gradient magnitude
-%     Ix = conv2(I, [-1, 0, 1], 'same');
-%     Iy = conv2(I, [-1; 0; 1], 'same');
-%     Ixy = Ix.*Ix + Iy.*Iy;
-%     Ixy = Ixy.^0.5;
     Ixy = imgradient(I, 'sobel');
-%     Ixy = imgradient(I, 'prewitt');
-%     Ixy = imgradient(I, 'central');
-%     Ixy = imgradient(I, 'intermediate');
-%     Ixy = imgradient(I, 'roberts');
     
     % Compute mRTV for each pixel based on equation (4)
     mRTV = zeros(size(I));
@@ -29,16 +21,16 @@ function mRTV = computeMRTV(I, k)
     parfor i = 1 : dimX
         for j = 1 : dimY
             
-            minX = max(1, i-half_k);
-            minY = max(1, j-half_k);
+            minX = max(i-half_k, 1);
             maxX = min(i+half_k, dimX);
+            minY = max(j-half_k, 1);
             maxY = min(j+half_k, dimY);
             
             I_patch = I(minX:maxX, minY:maxY);
             Ixy_patch = Ixy(minX:maxX, minY:maxY);
             mRTV(i, j) = (max(I_patch(:)) - min(I_patch(:))) * ...
                 max(Ixy_patch(:)) / (sum(Ixy_patch(:)) + eps);
-            
+
         end
     end
     
