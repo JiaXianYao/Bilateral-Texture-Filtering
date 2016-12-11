@@ -9,7 +9,7 @@
 %    J = bilateralTextureFilter(I, k, iter) performs bilateral texture
 %    filtering for the grayscale or color image I. I should be a double
 %    precision matrix with normalized values in the closed interval [0,1].
-%    The patch size is defined by K and it must be odd valued. The number
+%    The patch size is defined by K and it must be odd-valued. The number
 %    of filtering iterations is defined by ITER. All notations used in the
 %    function are consistent with those used in the paper.
 %
@@ -17,9 +17,24 @@
 
 function J = bilateralTextureFilter(I, k, iter)
 
-    % Check image and patch size
-    assert(isfloat(I) && min(I(:)) >= 0 && max(I(:)) <= 1 ...
-        && mod(k, 2) == 1);
+    % Verify the input image I is valid
+    if ~isfloat(I) || ~sum([1, 3] == size(I, 3)) ...
+            || min(I(:)) < 0 || max(I(:)) > 1
+        error(['Input image I must be a double precision matrix of ', ...
+               'size MxNx1 or MxNx3 on the closed interval [0,1].']);
+    end
+    
+    % Verify patch size k
+    if isempty(k) || numel(k) ~= 1 || k < 1 || mod(k, 2) ~= 1
+        error('Patch size k must be at least 3 and an odd-valued.');
+    end
+    k = round(k);
+
+    % Verify the number of ieration iter
+    if isempty(iter) || numel(iter) ~= 1 || iter < 1
+        error('There must be at least one iteration');
+    end
+    iter = round(iter);
     
     % Image parameters
     dimX = size(I, 1); % dimension of I in x
@@ -30,7 +45,7 @@ function J = bilateralTextureFilter(I, k, iter)
     s = 2 * k - 1;             % spatial kernel size
     half_s = floor(s / 2);     % half of spatial kernel size
     sigma_s = k - 1;           % spatial sigma
-    sigma_r = 0.025 * sqrt(c); % range sigma (0.05 * sqrt(c))
+    sigma_r = 0.025 * sqrt(c); % range sigma
     
     % Pre-compute the Gaussian spatial kernel
     f = fspecial('gaussian', s, sigma_s);
@@ -40,7 +55,7 @@ function J = bilateralTextureFilter(I, k, iter)
     mRTVs = zeros(size(I)); % computed mRTV based on Eq. (4)
     J = zeros(size(I));     % output filtered image
     
-    % Run the filtering a few times
+    % Apply the filter 'iter' times
     for m = 1 : iter
         
         % Compute the blurred image and mRTV
@@ -82,7 +97,7 @@ function J = bilateralTextureFilter(I, k, iter)
             end
         end
         
-        % Reset I for the new iteration
+        % Update I for the new iteration
         I = J;
 
     end

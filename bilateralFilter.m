@@ -7,8 +7,8 @@
 %        Images. In Proceedings of the IEEE International Conference on
 %        Computer Vision, 1998. 
 %
-%    B = bfilter2(A,W,SIGMA) performs 2-D bilateral filtering for the
-%    grayscale or color image A. A should be a double precision matrix with
+%    B = bfilter2(A, W, SIGMA_S, SIGMA_R) performs 2-D bilateral filtering
+%    for color image A. A should be a double precision matrix with
 %    normalized values in the closed interval [0,1]. The half-size of the
 %    Gaussian bilateral filter window is defined by W. The spatial-domain
 %    standard deviation is given by SIGMA_S and the range-domain standard
@@ -18,6 +18,28 @@
 % Lanman, Brown University, September 2006).
 
 function B = bilateralFilter(A, w, sigma_s, sigma_r)
+
+    % Verify the input image A is valid
+    if ~isfloat(A) || size(A, 3) ~= 3 || min(A(:)) < 0 || max(A(:)) > 1
+        error(['Input image A must be a double precision matrix of ', ...
+               'size MxNx3 on the closed interval [0,1].']);
+    end
+    
+    % Verify bilateral filter window size
+    if isempty(w) || numel(w) ~= 1 || w < 1
+        w = 5;
+    end
+    w = ceil(w);
+    
+    % Verify spatial-domain standard deviations.
+    if isempty(sigma_s) || numel(sigma_s) ~= 1 || sigma_s <= 0
+       sigma_s = 3;
+    end
+    
+    % Verify range-domain standard deviations.
+    if isempty(sigma_r) || numel(sigma_r) ~= 1 || sigma_r <= 0
+       sigma_s = 0.1;
+    end
 
     % Convert input RGB image to L*a*b color space
     A = applycform(A, makecform('srgb2lab'));

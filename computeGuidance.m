@@ -1,12 +1,10 @@
-function G_prime = computeGuidance(B, mRTV, k)
-
 % Compute the final guidance image (G') based on Eq. (5) and (6)
-% B:    blurred image (single or three channeled)
+%
+% B:    blurred image (single or three color channeled)
 % mRTV: computed mRTV values
-% k:    odd valued patch size
+% k:    odd-valued patch size
 
-    % Check B and mRTV have the same dimension
-    assert(size(B, 1) == size(mRTV, 1) && size(B, 2) == size(mRTV, 2));
+function G_prime = computeGuidance(B, mRTV, k)
     
     % Parameters
     dimX = size(B, 1);     % dimension of B in x

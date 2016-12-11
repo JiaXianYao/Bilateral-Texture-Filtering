@@ -1,11 +1,9 @@
-function [B, mRTV] = computeBlurAndMRTV(I, k)
-
 % Compute the box filtered image and mRTV based on Eq. (4)
+%
 % I: input single-channel image
-% k: odd valued patch size
+% k: odd-valued patch size
 
-    % Check image
-    assert(size(I, 3) == 1);
+function [B, mRTV] = computeBlurAndMRTV(I, k)
 
     % Parameters
     dimX = size(I, 1);     % dimension of I in x
