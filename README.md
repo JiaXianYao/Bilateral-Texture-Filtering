@@ -6,5 +6,7 @@ In addition, over 30 example images with a variety of textures are included in t
 
 To run the algorithm, simply update the input image I, patch size K, and number of iterations ITER in "main.m" file; and then type "main" in the MATLAB console.
 
-Thanks,
+If you have any questions regarding the implementation, please feel free to email me at FIRST.LAST@eecs.berkeley.edu, where FIRST and LAST are replaced by my Chinese first and last name.
+
+Thanks
 JiaXian Yao
