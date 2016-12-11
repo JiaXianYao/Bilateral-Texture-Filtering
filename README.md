@@ -8,5 +8,5 @@ To run the algorithm, simply update the input image I, patch size K, and number 
 
 If you have any questions regarding the implementation, please feel free to email me at FIRST.LAST@eecs.berkeley.edu, where FIRST and LAST are replaced by my Chinese first and last name.
 
-Thanks
+Thanks,
 JiaXian Yao
